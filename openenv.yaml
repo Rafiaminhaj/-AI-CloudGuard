@@ -1,57 +1,77 @@
 name: cloud-incident-env
-
-description: Reinforcement Learning Environment for Autonomous Cloud Incident Management
-
-version: 1.0
-
-entrypoint: backend/app.py
-
-tasks:
-  - name: easy
-    description: Reduce CPU usage below 60
-
-  - name: medium
-    description: Recover system from incident state
-name: cloud-incident-env
 description: Reinforcement Learning Environment for Autonomous Cloud Incident Management
 version: "1.0"
 
 entrypoint: backend/app.py
 
+# ── Endpoints ────────────────────────────────────────────────────────────────
+endpoints:
+  reset: GET /reset
+  step:  POST /step
+  state: GET /state
+  grade: GET /grade/{task}
+
+# ── Tasks (3 required for submission) ────────────────────────────────────────
 tasks:
   - name: easy
-    description: Reduce CPU usage below 60%
+    description: Reduce CPU usage below 60
+    grader: backend/grader.py::grade_easy
+    initial_state:
+      cpu_usage: 80
+      memory_usage: 70
+      status: incident
 
   - name: medium
     description: Recover system from incident state
+    grader: backend/grader.py::grade_medium
+    initial_state:
+      cpu_usage: 75
+      memory_usage: 65
+      status: incident
 
-  - name: hard
-    description: Recover system and reduce CPU usage below 40%
-
-actions:
-  - restart_server
-  - scale_server
-  - ignore
-
-observation_space:
-  cpu_usage:
-    type: integer
-  memory_usage:
-    type: integer
-  status:
-    type: string
   - name: hard
     description: Recover system and reduce CPU below 40
+    grader: backend/grader.py::grade_hard
+    initial_state:
+      cpu_usage: 90
+      memory_usage: 80
+      status: incident
 
+# ── Action space ─────────────────────────────────────────────────────────────
 actions:
-  - restart_server
-  - scale_server
-  - ignore
+  - name: restart_server
+    description: Transition system to recovering status
+    reward: 0.5
+  - name: scale_server
+    description: Reduce CPU usage by 30 units
+    reward: 1.0
+  - name: ignore
+    description: Take no action on the incident
+    reward: -1.0
 
+# ── Observation space (typed) ─────────────────────────────────────────────────
 observation_space:
   cpu_usage:
     type: int
+    min: 0
+    max: 100
+    description: Current CPU utilization percentage
   memory_usage:
     type: int
+    min: 0
+    max: 100
+    description: Current RAM utilization percentage
   status:
     type: string
+    enum: [incident, recovering, resolved]
+    description: Current system status
+
+# ── Score range ───────────────────────────────────────────────────────────────
+reward_range: [0.0, 1.0]
+
+# ── Inference ─────────────────────────────────────────────────────────────────
+inference_script: inference.py
+inference_env:
+  API_BASE_URL: "<LLM API base URL>"
+  MODEL_NAME:   "<model identifier>"
+  HF_TOKEN:     "<HuggingFace / API key>"
