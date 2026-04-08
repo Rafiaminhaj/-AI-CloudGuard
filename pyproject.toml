@@ -1,0 +1,13 @@
+[project]
+name = "ai-cloudguard"
+version = "0.1.0"
+description = "AI-powered autonomous cloud incident response system"
+authors = [
+  { name="Rafia Minhaj" }
+]
+dependencies = [
+  "flask"
+]
+
+[tool.openenv]
+entrypoint = "inference.py"
