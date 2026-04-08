@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>AI CloudGuard - DevOps Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+}
+
+h1{
+margin-top:20px;
+}
+
+.dashboard{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+width:90%;
+margin:auto;
+margin-top:20px;
+}
+
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:12px;
+box-shadow:0px 5px 20px rgba(0,0,0,0.3);
+}
+
+.server-grid{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:15px;
+margin-top:20px;
+}
+
+.server{
+padding:15px;
+border-radius:10px;
+background:#334155;
+font-size:14px;
+}
+
+.server span{
+display:block;
+margin-top:5px;
+}
+
+.buttons{
+margin-top:25px;
+}
+
+button{
+padding:12px 18px;
+margin:8px;
+font-size:15px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.restart{background:#f59e0b;color:white;}
+.scale{background:#22c55e;color:white;}
+.ignore{background:#ef4444;color:white;}
+.auto{background:#6366f1;color:white;}
+.attack{background:#dc2626;color:white;}
+
+button:hover{
+transform:scale(1.05);
+}
+
+.chart-container{
+width:100%;
+height:300px;
+}
+
+.footer{
+margin-top:25px;
+opacity:0.6;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🛡️ AI CloudGuard DevOps Dashboard</h1>
+
+<div class="dashboard">
+
+<div class="card">
+
+<h2>System Status</h2>
+
+<div id="status">
+CPU: -- | Status: --
+</div>
+
+<h2 id="healthIcon">🟢</h2>
+
+</div>
+
+
+<div class="card">
+
+<h2>Live CPU Monitoring</h2>
+
+<div class="chart-container">
+<canvas id="cpuChart"></canvas>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card" style="width:90%;margin:auto;margin-top:20px;">
+
+<h2>Multi Server Cluster</h2>
+
+<div class="server-grid" id="servers">
+
+<div class="server">Server 1 <span id="s1">🟢 Healthy</span></div>
+<div class="server">Server 2 <span id="s2">🟢 Healthy</span></div>
+<div class="server">Server 3 <span id="s3">🟢 Healthy</span></div>
+<div class="server">Server 4 <span id="s4">🟢 Healthy</span></div>
+<div class="server">Server 5 <span id="s5">🟢 Healthy</span></div>
+
+</div>
+
+</div>
+
+
+<div class="buttons">
+
+<button class="restart" onclick="sendAction('restart_server')">
+Restart Service
+</button>
+
+<button class="scale" onclick="scaleServers()">
+Auto Scale Servers
+</button>
+
+<button class="ignore" onclick="sendAction('ignore')">
+Ignore
+</button>
+
+<button class="attack" onclick="simulateAttack()">
+🚨 Simulate DDoS Attack
+</button>
+
+<br>
+
+<button class="auto" onclick="autoMode()">
+🤖 Enable AI Auto Response
+</button>
+
+</div>
+
+<div class="footer">
+AI CloudGuard • Autonomous Cloud Incident Response Platform
+</div>
+
+
+<script>
+
+let cpuData=[]
+let labels=[]
+
+const ctx=document.getElementById('cpuChart').getContext('2d')
+
+const chart=new Chart(ctx,{
+type:'line',
+data:{
+labels:labels,
+datasets:[{
+label:'CPU Usage',
+data:cpuData,
+borderColor:'#22c55e',
+tension:0.4
+}]
+},
+options:{
+scales:{
+y:{beginAtZero:true,max:100}
+}
+}
+})
+
+
+
+async function sendAction(action){
+
+const res=await fetch("/step",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({action:action})
+})
+
+const data=await res.json()
+
+const cpu=data.state.cpu_usage
+const status=data.state.status
+
+document.getElementById("status").innerHTML=
+"CPU: "+cpu+" | Status: "+status+" | Reward: "+data.reward
+
+updateHealth(cpu)
+updateChart(cpu)
+updateServers(cpu)
+
+}
+
+
+function updateHealth(cpu){
+
+let icon="🟢"
+
+if(cpu>80) icon="🔴"
+else if(cpu>50) icon="🟡"
+
+document.getElementById("healthIcon").innerHTML=icon
+
+}
+
+
+function updateChart(cpu){
+
+cpuData.push(cpu)
+
+labels.push(cpuData.length)
+
+if(cpuData.length>10){
+cpuData.shift()
+labels.shift()
+}
+
+chart.update()
+
+}
+
+
+
+function updateServers(cpu){
+
+for(let i=1;i<=5;i++){
+
+let icon="🟢 Healthy"
+
+if(cpu>80) icon="🔴 Critical"
+else if(cpu>50) icon="🟡 Warning"
+
+document.getElementById("s"+i).innerHTML=icon
+
+}
+
+}
+
+
+
+async function autoMode(){
+
+const res=await fetch("/state")
+
+const data=await res.json()
+
+const cpu=data.cpu_usage
+
+let action="ignore"
+
+if(cpu>80) action="scale_server"
+else if(cpu>50) action="restart_server"
+
+sendAction(action)
+
+}
+
+
+
+function simulateAttack(){
+
+for(let i=1;i<=5;i++){
+document.getElementById("s"+i).innerHTML="🔴 Under Attack"
+}
+
+document.getElementById("status").innerHTML="🚨 DDoS Attack Detected!"
+
+}
+
+
+
+function scaleServers(){
+
+const container=document.getElementById("servers")
+
+const newServer=document.createElement("div")
+
+newServer.className="server"
+
+newServer.innerHTML="New Server <span>🟢 Healthy</span>"
+
+container.appendChild(newServer)
+
+}
+
+</script>
+
+</body>
+</html>
