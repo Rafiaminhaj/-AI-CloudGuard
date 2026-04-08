@@ -1,30 +1,61 @@
-# AI CloudGuard
+# 🛡️ AI CloudGuard
+### Autonomous AI System for Cloud Incident Response
 
-AI CloudGuard is a Reinforcement Learning environment designed to simulate cloud incident management.
+AI CloudGuard is an **AI-powered DevOps incident response platform** that automatically detects cloud infrastructure issues and takes intelligent actions such as scaling servers, restarting services, and mitigating attacks.
 
-## Problem
+This project simulates **real-world cloud failures** and demonstrates how **AI can automate DevOps operations.**
 
-Cloud servers often face incidents like high CPU usage or service failures.  
-This environment allows AI agents to learn how to respond to such incidents automatically.
+---
 
-## Actions
+# 🌍 Problem Statement
 
-- restart_server
-- scale_server
-- ignore
+Modern cloud systems suffer from:
 
-## Tasks
+• CPU overload  
+• Server crashes  
+• DDoS attacks  
+• High latency  
+• Infrastructure scaling issues  
 
-Easy → Reduce CPU usage below 60  
-Medium → Recover system from incident  
-Hard → Recover system and reduce CPU below 40
+DevOps engineers usually need to **manually detect and respond to incidents.**
 
-## How to Run
+AI CloudGuard solves this by introducing an **Autonomous AI Agent** that monitors the system and **automatically takes recovery actions.**
 
-Start backend:
+---
 
-python backend/app.py
+# 🧠 Key Features
 
-Run inference:
+✅ Live Cloud Dashboard  
+✅ AI Auto Response Mode  
+✅ Multi-Server Simulation  
+✅ Server Health Monitoring  
+✅ DDoS Attack Simulation  
+✅ Auto Scaling Infrastructure  
+✅ Live CPU Monitoring Graph  
+✅ DevOps Style Control Panel  
 
-python backend/inference.py
+---
+
+# 🖥️ System Dashboard
+
+The dashboard displays:
+
+• CPU usage  
+• Server health status  
+• Live metrics graph  
+• Incident response actions  
+• AI decision making  
+
+Server health indicators:
+
+🟢 Healthy  
+🟡 Warning  
+🔴 Critical  
+
+---
+
+# 🤖 AI Auto Response
+
+The AI agent automatically decides the best action.
+
+Example decision logic:
