@@ -1,12 +1,12 @@
 [project]
 name = "ai-cloudguard"
 version = "0.1.0"
-description = "AI-powered autonomous cloud incident response system"
+description = "AI-powered autonomous cloud incident response platform"
 authors = [
-  { name="Rafia Minhaj" }
+    {name = "Rafia Minhaj"}
 ]
 dependencies = [
-  "flask"
+    "flask"
 ]
 
 [tool.openenv]
