@@ -4,74 +4,25 @@ version: "1.0"
 
 entrypoint: backend/app.py
 
-# ── Endpoints ────────────────────────────────────────────────────────────────
-endpoints:
-  reset: GET /reset
-  step:  POST /step
-  state: GET /state
-  grade: GET /grade/{task}
-
-# ── Tasks (3 required for submission) ────────────────────────────────────────
 tasks:
   - name: easy
-    description: Reduce CPU usage below 60
-    grader: backend/grader.py::grade_easy
-    initial_state:
-      cpu_usage: 80
-      memory_usage: 70
-      status: incident
+    description: Reduce CPU usage below 60%
 
   - name: medium
     description: Recover system from incident state
-    grader: backend/grader.py::grade_medium
-    initial_state:
-      cpu_usage: 75
-      memory_usage: 65
-      status: incident
 
   - name: hard
-    description: Recover system and reduce CPU below 40
-    grader: backend/grader.py::grade_hard
-    initial_state:
-      cpu_usage: 90
-      memory_usage: 80
-      status: incident
+    description: Recover system and reduce CPU usage below 40%
 
-# ── Action space ─────────────────────────────────────────────────────────────
 actions:
-  - name: restart_server
-    description: Transition system to recovering status
-    reward: 0.5
-  - name: scale_server
-    description: Reduce CPU usage by 30 units
-    reward: 1.0
-  - name: ignore
-    description: Take no action on the incident
-    reward: -1.0
+  - restart_server
+  - scale_server
+  - ignore
 
-# ── Observation space (typed) ─────────────────────────────────────────────────
 observation_space:
   cpu_usage:
-    type: int
-    min: 0
-    max: 100
-    description: Current CPU utilization percentage
+    type: integer
   memory_usage:
-    type: int
-    min: 0
-    max: 100
-    description: Current RAM utilization percentage
+    type: integer
   status:
     type: string
-    enum: [incident, recovering, resolved]
-    description: Current system status
-
-# ── Score range ───────────────────────────────────────────────────────────────
-reward_range: [0.0, 1.0]
-
-# ── Inference ─────────────────────────────────────────────────────────────────
-inference_script: inference.py
-inference_env:
-  API_BASE_URL: "<LLM API base URL>"
-  MODEL_NAME:   "<model identifier>"
-  HF_TOKEN:     "<HuggingFace / API key>"
