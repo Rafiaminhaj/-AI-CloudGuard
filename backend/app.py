@@ -13,7 +13,7 @@ def home():
 
 
 # Reset environment
-@app.route("/reset", methods=["GET"])
+@app.route("/reset", methods=["GET","POST"])
 def reset():
     state = env.reset()
     return jsonify(state)
