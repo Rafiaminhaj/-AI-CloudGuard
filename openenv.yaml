@@ -1,20 +1,18 @@
 name: cloud-incident-env
-
 description: Reinforcement Learning Environment for Autonomous Cloud Incident Management
-
-version: 1.0
+version: "1.0"
 
 entrypoint: backend/app.py
 
 tasks:
   - name: easy
-    description: Reduce CPU usage below 60
+    description: Reduce CPU usage below 60%
 
   - name: medium
     description: Recover system from incident state
 
   - name: hard
-    description: Recover system and reduce CPU below 40
+    description: Recover system and reduce CPU usage below 40%
 
 actions:
   - restart_server
@@ -23,8 +21,8 @@ actions:
 
 observation_space:
   cpu_usage:
-    type: int
+    type: integer
   memory_usage:
-    type: int
+    type: integer
   status:
     type: string
