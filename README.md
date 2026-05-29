@@ -1,211 +1,113 @@
-# 🛡️ AI CloudGuard
+<div align="center">
+  <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzhzMTg4eTBjNDI4OWNnMHFkcHc3ODczanJpejB3ZWl2YXFxbThzMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/L8K62iDadb19p9C35V/giphy.gif" alt="Cyber Security" width="100%" height="250" style="object-fit: cover; border-radius: 10px;" />
 
-### Autonomous AI System for Intelligent Cloud Incident Response
+  # 🛡️ AI CloudGuard: Enterprise SOC Platform
+  **Autonomous AI System for Intelligent Cloud Incident Response & Threat Mitigation**
+  
+  [![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://frontend-three-ashen-77.vercel.app)
+  [![Backend](https://img.shields.io/badge/Backend-Render-46E3B7?style=for-the-badge&logo=render)](https://ai-cloudguard.onrender.com)
+  [![React](https://img.shields.io/badge/Frontend-React_Vite-61DAFB?style=for-the-badge&logo=react)](https://reactjs.org/)
+  [![Python](https://img.shields.io/badge/Backend-Python_Flask-3776AB?style=for-the-badge&logo=python)](https://flask.palletsprojects.com/)
 
-AI CloudGuard is an **AI-powered DevOps incident management platform** that automatically detects infrastructure failures and takes intelligent recovery actions.
-
-The system simulates **real-world cloud infrastructure incidents** such as CPU overload, service crashes, and DDoS attacks, and demonstrates how **AI agents can autonomously stabilize cloud environments.**
-
----
-
-# 🚀 Project Overview
-
-Modern cloud infrastructure requires constant monitoring and rapid response to failures.
-
-However, DevOps teams often spend significant time manually:
-
-• Detecting incidents
-• Diagnosing failures
-• Restarting services
-• Scaling infrastructure
-
-**AI CloudGuard introduces an autonomous AI agent capable of detecting system anomalies and automatically executing recovery strategies.**
+</div>
 
 ---
 
-# 🌍 Problem Statement
+## 🚀 Project Overview
 
-Cloud infrastructure commonly suffers from:
+Modern cloud infrastructure requires constant monitoring and rapid response to failures. DevOps teams often spend significant time manually detecting incidents, diagnosing failures, restarting services, and scaling infrastructure.
 
-• CPU overload
-• Service failures
-• DDoS traffic spikes
-• High latency
-• Resource exhaustion
+**AI CloudGuard** introduces an autonomous AI multi-agent system (Swarm) capable of detecting system anomalies and automatically executing recovery strategies using **Retrieval-Augmented Generation (RAG)**.
 
-Manual response leads to **slow recovery and downtime.**
+## 🔥 Key Features
 
-AI CloudGuard aims to solve this problem using **AI-driven incident automation.**
-
----
-
-# 🧠 Key Features
-
-✅ Live DevOps Dashboard
-✅ AI Auto Response Mode
-✅ Multi-Server Simulation
-✅ Server Health Monitoring
-✅ DDoS Attack Simulation
-✅ Auto Scaling Infrastructure
-✅ Real-time CPU Monitoring Graph
-✅ Intelligent Incident Response
-✅ DevOps Style Control Panel
+*   **🌐 Live Global Threat Map**: Cinematic visualization of cyber threats and packet telemetry.
+*   **🤖 Multi-Agent Swarm Debate**: Watch AI agents (Alpha & Beta) debate in real-time over the best mitigation strategy for detected anomalies.
+*   **📚 RAG Knowledge Engine**: Integrated with a custom Vector Database mimicking FAISS/ChromaDB for querying DevOps Playbooks.
+*   **⚙️ CI/CD Pipeline Scanner**: Live simulation of vulnerability scanning in GitHub commits and deployment pipelines.
+*   **🖥️ Matrix Rain & Cinematic Overlays**: High-end UI/UX built with Framer Motion, featuring glitch effects, auto-healing sequences, and interactive terminal logs.
+*   **🔐 Secret Developer Access**: Secure biometric login simulation with a hidden backdoor override.
 
 ---
 
-# 🖥️ System Dashboard
+## 🏗️ System Architecture
 
-The interactive dashboard visualizes system health and cloud metrics in real time.
+![Architecture](AI%20cloudguard%20architecture%20flowchart.png)
 
-Displayed metrics include:
+### 🛠️ Tech Stack
 
-• CPU usage
-• Server health indicators
-• Infrastructure metrics
-• Live monitoring graph
-• Incident logs
-• AI decision actions
+**Frontend (Client-Side)**
+*   **React 18 + Vite**: Lightning-fast component rendering.
+*   **Tailwind CSS**: Utility-first styling for the dark Cyberpunk aesthetic.
+*   **Framer Motion**: Complex cinematic animations and micro-interactions.
+*   **Lucide React**: Crisp, modern iconography.
 
-Server status indicators:
-
-🟢 Healthy
-🟡 Warning
-🔴 Critical
-
----
-
-# 🤖 AI Auto Response System
-
-The AI agent continuously monitors infrastructure metrics and determines the best response strategy.
-
-Example decision logic:
-
-```
-if CPU > 80% → Scale Infrastructure
-if CPU > 50% → Restart Server
-else → Ignore
-```
-
-The system automatically stabilizes the environment without human intervention.
+**Backend (Server-Side)**
+*   **Python + Flask**: Lightweight, robust API server.
+*   **Gunicorn**: Production WSGI HTTP Server.
+*   **Reinforcement Learning Simulation**: Custom environment mimicking cloud states.
+*   **Cosine Similarity RAG**: Built-in vector search for playbook retrieval.
 
 ---
 
-# ⚡ Attack Simulation
+## 💻 Live Demonstration
 
-To demonstrate real-world cloud failures, the platform includes an **attack simulation engine**.
+The project is fully deployed and accessible over the cloud:
 
-Supported scenarios:
+👉 **[Access the Live Platform](https://frontend-three-ashen-77.vercel.app)**
 
-• DDoS traffic spike
-• CPU overload attack
-• Infrastructure stress testing
+> **Demo Access Hint:** Click the link above, and on the restricted login page, type `OVERRIDE` in the Clearance Code input to bypass the biometric authentication.
 
-This allows testing **AI resilience and automated recovery.**
+*(Note: The Python backend is hosted on a Free Render instance. It spins down after 15 minutes of inactivity. If the AI Assistant or RL State takes a moment to respond initially, please allow ~50 seconds for the server to wake up).*
 
 ---
 
-# 🧩 System Architecture
+## ⚙️ Local Installation
 
-Below is the architecture diagram of AI CloudGuard.
+If you wish to run the project locally on your machine:
 
-![Architecture](architecture.png)
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Rafiaminhaj/-AI-CloudGuard.git
+   cd -AI-CloudGuard
+   ```
 
----
+2. **Start the Backend (Python)**
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   python app.py
+   ```
+   *Server will run on `http://localhost:7860`*
 
-# 🛠️ Tech Stack
-
-Frontend
-• HTML
-• CSS
-• JavaScript
-• Chart.js
-
-Backend
-• Python
-• Flask
-
-AI / Logic
-• Reinforcement Learning simulation
-• Autonomous decision engine
-
-DevOps Simulation
-• Multi-server infrastructure model
-• Incident simulation engine
+3. **Start the Frontend (React/Vite)**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+   *Client will run on `http://localhost:5173`*
 
 ---
 
-# 📊 How It Works
+## 📸 Screenshots
 
-1️⃣ The monitoring system tracks cloud metrics.
+*(Add screenshots of your UI here to make the portfolio stand out even more! Just upload images to the repo and link them like `![Dashboard](screenshot1.png)`)*
 
-2️⃣ Incidents such as CPU spikes or attacks are detected.
-
-3️⃣ The AI agent evaluates the system state.
-
-4️⃣ The agent chooses the optimal recovery action.
-
-5️⃣ Infrastructure automatically stabilizes.
+<div align="center">
+  <img src="https://media.giphy.com/media/JtwMddKpsF9Hq/giphy.gif" width="400" style="border-radius: 10px; margin: 10px;" />
+  <img src="https://media.giphy.com/media/VwXzgG72JGeJ2/giphy.gif" width="400" style="border-radius: 10px; margin: 10px;" />
+</div>
 
 ---
 
-# 💻 Running the Project
+## 👩‍💻 Author
 
-Clone the repository
-
-```
-git clone https://github.com/Rafiaminhaj/-AI-CloudGuard.git
-```
-
-Install dependencies
-
-```
-pip install -r requirements.txt
-```
-
-Run the backend server
-
-```
-python app.py
-```
-
-Open in browser
-
-```
-http://localhost:7860
-```
+**Rafia Minhaj**  
+*Student | Full-Stack Developer | AI & Cybersecurity Enthusiast*
 
 ---
 
-# 🎯 Use Cases
-
-AI CloudGuard can be used for:
-
-• AI-driven DevOps automation
-• Cloud incident response research
-• Infrastructure monitoring systems
-• DevOps learning simulations
-• Autonomous system experimentation
-
----
-
-# 🔮 Future Improvements
-
-• Reinforcement learning training agent
-• Kubernetes integration
-• Real cloud monitoring APIs
-• Distributed infrastructure simulation
-• AI anomaly detection models
-
----
-
-# 👩‍💻 Author
-
-**Rafia Minhaj**
-
-Student | Developer | AI & DevOps Enthusiast
-
----
-
-# ⭐ Support
+## ⭐ Support
 
 If you found this project useful, please consider giving it a **star ⭐ on GitHub**.
