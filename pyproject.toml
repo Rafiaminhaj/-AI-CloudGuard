@@ -6,7 +6,9 @@ authors = [
     {name = "Rafia Minhaj"}
 ]
 dependencies = [
-    "flask"
+    "flask",
+    "flask-cors",
+    "gunicorn"
 ]
 
 [tool.openenv]
