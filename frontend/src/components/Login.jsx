@@ -112,7 +112,7 @@ export default function Login({ onLogin }) {
               onChange={(e) => setPassword(e.target.value)}
               disabled={isAuthenticating}
               className="w-full bg-black/40 border border-white/10 rounded-md p-3 text-sm text-white focus:outline-none focus:border-purple-400 focus:shadow-[0_0_10px_rgba(168,85,247,0.3)] transition disabled:opacity-50"
-              placeholder="••••••••••••"
+              placeholder="Enter Code (Hint: OVERRIDE)"
             />
           </div>
 
@@ -140,6 +140,10 @@ export default function Login({ onLogin }) {
 
         <div className={`mt-6 text-center text-[10px] uppercase tracking-widest font-bold ${status === 'ACCESS GRANTED' ? 'text-green-400' : status.includes('DENIED') ? 'text-red-400' : isAuthenticating ? 'text-amber-400 animate-pulse' : 'text-slate-500'}`}>
           [{status}]
+        </div>
+
+        <div className="mt-4 text-center text-[9px] text-slate-500 font-mono">
+          Demo Access: Type <span className="text-cyan-500 font-bold">OVERRIDE</span> in the Clearance Code to bypass authentication.
         </div>
       </motion.div>
     </div>
