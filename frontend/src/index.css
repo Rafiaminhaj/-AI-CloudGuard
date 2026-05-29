@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-base: #02040a;
+  --color-panel-bg: rgba(10, 14, 23, 0.75);
+  --color-border-subtle: rgba(255, 255, 255, 0.05);
+  --color-neon-cyan: #22d3ee;
+  --color-neon-purple: #a855f7;
+  --color-neon-red: #f43f5e;
+  --color-neon-amber: #f59e0b;
+}
+
+body {
+  background-color: var(--color-bg-base);
+  color: #f8fafc;
+  font-family: 'Inter', sans-serif;
+  /* Darker, cinematic background */
+  background: radial-gradient(circle at center, #070b19 0%, #02040a 100%);
+  overflow-x: hidden;
+}
+
+.glass-panel {
+  background: rgba(4, 9, 20, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(34, 211, 238, 0.15);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(34, 211, 238, 0.05);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle inner glow line at top of panels */
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.4), transparent);
+}
+
+.cyber-grid {
+  position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+  background-image: linear-gradient(var(--color-border-subtle) 1px, transparent 1px), linear-gradient(90deg, var(--color-border-subtle) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(600px) rotateX(60deg) translateY(-100px);
+  animation: gridMove 20s linear infinite; z-index: -2; pointer-events: none;
+}
+@keyframes gridMove { 100% { transform: perspective(600px) rotateX(60deg) translateY(60px); } }
+
+@keyframes glitch-anim {
+  0% { transform: translate(0) }
+  20% { transform: translate(-2px, 2px) }
+  40% { transform: translate(-2px, -2px) }
+  60% { transform: translate(2px, 2px) }
+  80% { transform: translate(2px, -2px) }
+  100% { transform: translate(0) }
+}
+.glitch-text {
+  animation: glitch-anim 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+}
+
+/* Map & Radar */
+.radar-scan {
+  position: absolute; top:50%; left:50%; width: 100px; height: 100px;
+  border-radius:50%; background: conic-gradient(from 0deg, transparent 70%, rgba(34,211,238,0.5));
+  transform-origin: 0 0; animation: sweep 3s linear infinite; pointer-events: none;
+}
+@keyframes sweep { 100% { transform: rotate(360deg); } }
+
+.map-beam {
+  stroke-width: 2; fill: none; stroke-dasharray: 200; stroke-dashoffset: 200;
+  animation: beamFire 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes beamFire { to { stroke-dashoffset: 0; } }
+
+.soc-ledger::-webkit-scrollbar { width: 4px; }
+.soc-ledger::-webkit-scrollbar-thumb { background: #444; }

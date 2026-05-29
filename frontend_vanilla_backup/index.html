@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI CloudGuard | Ultimate Enterprise Cyber Defense</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #02040a; --panel-bg: rgba(10, 14, 23, 0.75);
+            --border-subtle: rgba(255, 255, 255, 0.05); --border-neon: rgba(56, 189, 248, 0.4);
+            --neon-blue: #0ea5e9; --neon-cyan: #22d3ee; --neon-purple: #a855f7;
+            --neon-green: #10b981; --neon-red: #f43f5e; --neon-amber: #f59e0b;
+            --text-main: #f8fafc; --text-muted: #64748b;
+            --font-ui: 'Inter', sans-serif; --font-mono: 'Space Mono', monospace;
+        }
+
+        body.executive-mode {
+            --bg-base: #f8fafc; --panel-bg: rgba(255, 255, 255, 0.9);
+            --border-subtle: rgba(0, 0, 0, 0.1); --border-neon: rgba(14, 165, 233, 0.5);
+            --text-main: #0f172a; --text-muted: #475569;
+        }
+
+        * { box-sizing: border-box; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg-base); color: var(--text-main); font-family: var(--font-ui); overflow-x: hidden; transition: 0.5s; user-select: none; }
+
+        /* Canvas Background */
+        #particleCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -3; pointer-events: none; }
+        .cyber-grid { position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background-image: linear-gradient(var(--border-subtle) 1px, transparent 1px), linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px); background-size: 60px 60px; transform: perspective(600px) rotateX(60deg) translateY(-100px); animation: gridMove 20s linear infinite; z-index: -2; pointer-events: none; }
+        body.executive-mode .cyber-grid { display: none; }
+        @keyframes gridMove { 100% { transform: perspective(600px) rotateX(60deg) translateY(60px); } }
+
+        /* Top Bar & Hero Statement */
+        .hero-banner { width: 100%; background: rgba(14, 165, 233, 0.1); color: var(--neon-cyan); text-align: center; font-size: 0.7rem; font-family: var(--font-mono); padding: 4px; text-transform: uppercase; letter-spacing: 2px; }
+        
+        .top-bar { width: 100%; padding: 12px 30px; background: var(--panel-bg); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border-neon); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); position: sticky; top: 0; z-index: 100; }
+        .brand-title { font-size: 1.6rem; font-weight: 800; letter-spacing: 1px; margin: 0; display: flex; align-items: center; gap: 12px; }
+        .brand-logo { font-size: 2rem; filter: drop-shadow(0 0 10px var(--neon-cyan)); }
+        
+        .kpi-row { display: flex; gap: 20px; align-items: center; }
+        
+        /* Risk Meter */
+        .risk-meter { display: flex; flex-direction: column; align-items: flex-end; gap: 4px;}
+        .risk-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .risk-bars { display: flex; gap: 3px; }
+        .risk-bar { width: 15px; height: 10px; background: rgba(255,255,255,0.1); border-radius: 2px; transition: 0.3s; }
+        .risk-meter[data-risk="1"] .risk-bar:nth-child(1) { background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
+        .risk-meter[data-risk="2"] .risk-bar:nth-child(1), .risk-meter[data-risk="2"] .risk-bar:nth-child(2) { background: var(--neon-amber); box-shadow: 0 0 8px var(--neon-amber); }
+        .risk-meter[data-risk="3"] .risk-bar:nth-child(1), .risk-meter[data-risk="3"] .risk-bar:nth-child(2), .risk-meter[data-risk="3"] .risk-bar:nth-child(3) { background: var(--neon-red); box-shadow: 0 0 8px var(--neon-red); }
+        
+        .toggle-btn-top { background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); color: var(--text-muted); padding: 6px 12px; border-radius: 6px; font-size: 0.7rem; font-family: var(--font-mono); cursor: pointer; transition: 0.3s; }
+        .toggle-btn-top.active { background: rgba(244, 63, 94, 0.1); border-color: var(--neon-red); color: var(--neon-red); box-shadow: 0 0 10px rgba(244, 63, 94, 0.3); }
+
+        /* Dashboard Grid */
+        .dashboard-grid { display: grid; grid-template-columns: 350px 1fr 400px; gap: 20px; padding: 20px; max-width: 1920px; margin: 0 auto; min-height: calc(100vh - 100px); }
+
+        /* Panels */
+        .panel { background: var(--panel-bg); backdrop-filter: blur(20px); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 15px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s, border-color 0.3s; position: relative; overflow: hidden; }
+        .panel:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.1); box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+        .panel-header { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-main); border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+        .panel-header .dot { display: inline-block; width:8px; height:8px; border-radius:50%; background:var(--neon-cyan); box-shadow: 0 0 8px var(--neon-cyan); margin-right:8px; }
+
+        /* Metrics */
+        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .metric-box { background: rgba(0,0,0,0.2); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 10px; transition: 0.3s; }
+        .metric-title { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; display:flex; justify-content: space-between;}
+        .metric-val { font-family: var(--font-mono); font-size: 0.85rem; font-weight: bold; }
+        .chart-mini { height: 50px; width: 100%; }
+
+        /* Map */
+        .map-container { height: 260px; width: 100%; background: #010205; border-radius: 8px; position: relative; overflow: hidden; border: 1px solid var(--border-subtle); box-shadow: inset 0 0 40px rgba(0,0,0,0.8); }
+        .world-map-svg { width: 100%; height: 100%; opacity: 0.2; }
+        .map-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        .attack-beam { stroke-width: 2; fill: none; stroke-dasharray: 200; stroke-dashoffset: 200; animation: beamFire 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes beamFire { to { stroke-dashoffset: 0; } }
+        
+        .radar-scan { position: absolute; top:50%; left:50%; width: 100px; height: 100px; border-radius:50%; background: conic-gradient(from 0deg, transparent 70%, rgba(34,211,238,0.5)); transform-origin: 0 0; animation: sweep 3s linear infinite; pointer-events: none;}
+        @keyframes sweep { 100% { transform: rotate(360deg); } }
+
+        /* Infra Topology with Packets */
+        .infra-container { position: relative; width: 100%; padding: 10px 0;}
+        .infra-flow { display: flex; flex-direction: column; align-items: center; gap: 20px; position: relative; z-index: 2;}
+        .infra-row { display: flex; gap: 20px; justify-content: center; width: 100%; }
+        .infra-node { background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); padding: 12px 20px; border-radius: 8px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; position: relative;}
+        .infra-node.active { color: var(--text-main); border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(34, 211, 238, 0.2); }
+        .infra-node.danger { color: var(--neon-red); border-color: var(--neon-red); box-shadow: 0 0 20px rgba(244, 63, 94, 0.4); animation: shake 0.4s infinite; }
+        .infra-node.dead { transform: translateY(40px) rotate(15deg); opacity: 0; pointer-events: none; }
+        
+        /* Packet Overlay */
+        .packet-svg { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; z-index: 1;}
+        .packet-dot { fill: var(--neon-cyan); filter: drop-shadow(0 0 4px var(--neon-cyan)); }
+
+        /* AI Reasoning Neural Net */
+        .ai-terminal { position: relative; background: rgba(0,0,0,0.5); border: 1px solid var(--neon-cyan); border-radius: 8px; padding: 15px; font-family: var(--font-mono); font-size: 0.75rem; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+        .nn-canvas { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 0; opacity: 0.3; }
+        .ai-content { position: relative; z-index: 1; }
+        .typing-text { border-right: 2px solid var(--neon-cyan); color: var(--neon-cyan); animation: blinkCursor 0.7s infinite; min-height: 35px;}
+        .ai-conf-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.1); margin-top: 5px; position: relative; }
+        .ai-conf-fill { position: absolute; top:0; left:0; height:100%; width: 12%; background: var(--neon-cyan); box-shadow: 0 0 8px var(--neon-cyan); transition: 1s; }
+
+        /* SOC Terminal Ledger */
+        .soc-ledger { height: 200px; background: #050505; border: 1px solid #222; border-radius: 8px; padding: 10px; overflow-y: auto; font-family: var(--font-mono); display: flex; flex-direction: column; gap: 6px; scroll-behavior: smooth;}
+        .soc-ledger::-webkit-scrollbar { width: 4px; } .soc-ledger::-webkit-scrollbar-thumb { background: #444; }
+        .log-entry { font-size: 0.7rem; line-height: 1.4; display: flex; gap: 8px; align-items: flex-start; }
+        .log-time { color: #555; white-space: nowrap; }
+        .log-tag { padding: 2px 6px; border-radius: 3px; font-size: 0.6rem; font-weight: bold; background: rgba(255,255,255,0.1); color: #fff; }
+        .log-tag.AI { background: rgba(168,85,247,0.2); color: var(--neon-purple); }
+        .log-tag.K8S { background: rgba(14,165,233,0.2); color: var(--neon-blue); }
+        .log-tag.SEC { background: rgba(244,63,94,0.2); color: var(--neon-red); }
+        .log-tag.SYS { background: rgba(16,185,129,0.2); color: var(--neon-green); }
+        .log-msg { color: var(--text-main); opacity: 0.9; }
+
+        /* Controls */
+        .control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-cmd { background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 10px; border-radius: 8px; font-size: 0.7rem; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-cmd:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); playSound(200, 'sine', 0.05); }
+        .btn-cmd.danger:hover { border-color: var(--neon-red); color: var(--neon-red); box-shadow: 0 5px 15px rgba(244,63,94,0.3);}
+        .btn-cmd.action { grid-column: span 2; background: rgba(34,211,238,0.1); border-color: var(--neon-cyan); color: var(--neon-cyan); }
+        
+        .spinner { width: 14px; height: 14px; border: 2px solid transparent; border-top-color: currentColor; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
+        .btn-cmd.loading .spinner { display: inline-block; }
+
+    </style>
+</head>
+<body class="war-room-mode">
+
+    <div class="hero-banner">Built to simulate autonomous enterprise-grade cloud defense infrastructure operating under real-world cyber attack conditions.</div>
+    
+    <canvas id="particleCanvas"></canvas>
+    <div class="cyber-grid"></div>
+
+    <!-- Top Bar -->
+    <header class="top-bar">
+        <div class="brand-title">
+            <span class="brand-logo">🛡️</span>
+            <div>
+                <div>AI CLOUDGUARD</div>
+                <div class="tagline">Ultimate SOC Control Plane</div>
+            </div>
+        </div>
+        
+        <div class="kpi-row">
+            <button class="toggle-btn-top" id="btnSound" onclick="toggleSound()">🔊 Audio: ON</button>
+            <button class="toggle-btn-top" id="btnBattle" onclick="toggleBattleMode()">⚔️ Battle Mode: OFF</button>
+            
+            <div class="risk-meter" id="sysRisk" data-risk="1">
+                <span class="risk-label">System Risk Score</span>
+                <div class="risk-bars"><div class="risk-bar"></div><div class="risk-bar"></div><div class="risk-bar"></div></div>
+            </div>
+            
+            <button class="toggle-btn-top" onclick="document.body.classList.toggle('executive-mode'); playSound(300, 'sine', 0.1);">EXEC MODE</button>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        
+        <!-- LEFT PANEL: Telemetry -->
+        <div class="panel-col" style="display:flex; flex-direction:column; gap:20px;">
+            <div class="panel" style="flex-grow:1;">
+                <div class="panel-header"><span class="dot"></span> Real Observability Telemetry</div>
+                <div class="metrics-grid">
+                    <div class="metric-box"><div class="metric-title"><span>CPU Usage</span> <span id="m_cpu" class="metric-val">12%</span></div><div class="chart-mini"><canvas id="c_cpu"></canvas></div></div>
+                    <div class="metric-box"><div class="metric-title"><span>Memory</span> <span id="m_mem" class="metric-val">45%</span></div><div class="chart-mini"><canvas id="c_mem"></canvas></div></div>
+                    <div class="metric-box"><div class="metric-title"><span>Network</span> <span id="m_net" class="metric-val">2.4G</span></div><div class="chart-mini"><canvas id="c_net"></canvas></div></div>
+                    <div class="metric-box"><div class="metric-title"><span>API Latency</span> <span id="m_api" class="metric-val">42ms</span></div><div class="chart-mini"><canvas id="c_api"></canvas></div></div>
+                    <div class="metric-box"><div class="metric-title"><span>Error Rate</span> <span id="m_err" class="metric-val">0.01%</span></div><div class="chart-mini"><canvas id="c_err"></canvas></div></div>
+                    <div class="metric-box"><div class="metric-title"><span>Redis Queue</span> <span id="m_que" class="metric-val">10</span></div><div class="chart-mini"><canvas id="c_que"></canvas></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CENTER PANEL: Map & Infra -->
+        <div class="panel-col" style="display:flex; flex-direction:column; gap:20px;">
+            <div class="panel" style="padding:10px;">
+                <div class="panel-header" style="border:none; padding-bottom:0px; padding:5px 10px;"><span class="dot"></span> Global Threat Heatmap</div>
+                <div class="map-container">
+                    <div class="radar-scan"></div>
+                    <svg class="world-map-svg" viewBox="0 0 1000 500"><path d="M150,100 Q180,80 200,120 T280,150 T350,110 T400,160 T450,130 T500,180 T600,140 T700,190 T800,120 T900,160 T950,130 L950,400 L50,400 Z" fill="#334155"/></svg>
+                    <svg class="map-overlay" id="mapOverlay" viewBox="0 0 1000 500"></svg>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header"><span class="dot"></span> Live Kubernetes Topology Engine</div>
+                <div class="infra-container" id="infraCont">
+                    <svg class="packet-svg" id="packetSvg"></svg>
+                    <div class="infra-flow">
+                        <div class="infra-row"><div class="infra-node active" id="node-elb">Load Balancer</div></div>
+                        <div class="infra-row"><div class="infra-node active" id="node-gw1">API Gateway East</div><div class="infra-node active" id="node-gw2">API Gateway West</div></div>
+                        <div class="infra-row" id="k8sRow">
+                            <div class="infra-node active k8s-node" id="node-k1">K8s Pod 1</div>
+                            <div class="infra-node active k8s-node" id="node-k2">K8s Pod 2</div>
+                            <div class="infra-node active k8s-node" id="node-k3">K8s Pod 3</div>
+                        </div>
+                        <div class="infra-row"><div class="infra-node active" id="node-redis" style="border-color:var(--neon-purple); color:var(--neon-purple)">Redis Cache Cluster</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: AI Command & Terminal -->
+        <div class="panel-col" style="display:flex; flex-direction:column; gap:20px;">
+            <div class="panel">
+                <div class="panel-header"><span class="dot" style="background:var(--neon-cyan)"></span> AI Decision Engine</div>
+                <div class="ai-terminal">
+                    <canvas class="nn-canvas" id="nnCanvas"></canvas>
+                    <div class="ai-content">
+                        <div class="typing-text" id="aiText">> Monitoring autonomous cloud perimeter...</div>
+                        <div style="font-size:0.65rem; color:var(--text-muted); margin-top:10px;">Threat Classification Confidence</div>
+                        <div class="ai-conf-bar"><div class="ai-conf-fill" id="aiConfFill"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header"><span class="dot" style="background:var(--neon-red)"></span> Command Simulator</div>
+                <div class="control-grid">
+                    <button class="btn-cmd danger" onclick="triggerAttack(this, 'DDoS', '#f43f5e')"><span class="spinner"></span> 🚨 DDoS Strike</button>
+                    <button class="btn-cmd danger" onclick="triggerAttack(this, 'Bot Swarm', '#a855f7')"><span class="spinner"></span> 🕷️ Bot Swarm</button>
+                    <button class="btn-cmd warning" onclick="triggerAttack(this, 'Mem Exploit', '#f59e0b')"><span class="spinner"></span> ⚠️ Mem Exploit</button>
+                    <button class="btn-cmd warning" onclick="killNode(this)"><span class="spinner"></span> ☠️ Kill K8s Node</button>
+                    <button class="btn-cmd action" id="btnHeal" onclick="healSystem(this)"><span class="spinner"></span> 🤖 Engage AI Self-Healing</button>
+                </div>
+            </div>
+
+            <div class="panel" style="flex-grow:1;">
+                <div class="panel-header"><span class="dot"></span> Security Command Terminal</div>
+                <div class="soc-ledger" id="socLedger"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* --- WEB AUDIO SOUND DESIGN --- */
+        let audioCtx;
+        let soundEnabled = true;
+        
+        function initAudio() {
+            if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+        }
+        
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('btnSound').innerText = soundEnabled ? "🔊 Audio: ON" : "🔇 Audio: OFF";
+            if(soundEnabled) initAudio();
+        }
+
+        function playSound(freq, type='sine', duration=0.1, vol=0.1) {
+            if(!soundEnabled) return;
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playSiren() {
+            if(!soundEnabled) return;
+            initAudio();
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(600, audioCtx.currentTime + 0.5);
+            osc.frequency.linearRampToValueAtTime(400, audioCtx.currentTime + 1);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 1);
+        }
+
+        document.body.addEventListener('click', () => { if(soundEnabled && !audioCtx) initAudio(); }, {once:true});
+
+        /* --- SOC LEDGER TERMINAL --- */
+        async function logEvent(msg, tag="SYS") {
+            const ledger = document.getElementById('socLedger');
+            const ts = new Date().toLocaleTimeString();
+            
+            const div = document.createElement('div');
+            div.className = 'log-entry';
+            div.innerHTML = `<span class="log-time">[${ts}]</span> <span class="log-tag ${tag}">${tag}</span> <span class="log-msg" id="msg-${Date.now()}"></span>`;
+            ledger.appendChild(div);
+            ledger.scrollTop = ledger.scrollHeight;
+            
+            // Typewriter effect
+            const msgEl = div.querySelector('.log-msg');
+            for(let i=0; i<msg.length; i++) {
+                msgEl.textContent += msg[i];
+                if(i%3==0) ledger.scrollTop = ledger.scrollHeight;
+                await new Promise(r => setTimeout(r, 10)); // 10ms per char
+            }
+            if(ledger.children.length > 50) ledger.removeChild(ledger.firstChild);
+        }
+
+        /* --- CHART & TELEMETRY LOGIC --- */
+        Chart.defaults.color = '#64748b'; Chart.defaults.font.family = "'Space Mono', monospace"; Chart.defaults.plugins.legend.display = false; Chart.defaults.plugins.tooltip.enabled = false; Chart.defaults.elements.point.radius = 0; Chart.defaults.animation.duration = 0;
+        const createC = (id, c, m) => new Chart(document.getElementById(id).getContext('2d'), { type:'line', data:{labels:Array(20).fill(''),datasets:[{data:Array(20).fill(10),borderColor:c,borderWidth:1.5,fill:true,backgroundColor:c+'20',tension:0.3}]}, options:{maintainAspectRatio:false,scales:{x:{display:false},y:{min:0,max:m,display:false}}} });
+        const charts = { cpu: {c:createC('c_cpu','#10b981',100),el:document.getElementById('m_cpu'),current:15,s:'%'}, mem: {c:createC('c_mem','#0ea5e9',100),el:document.getElementById('m_mem'),current:45,s:'%'}, net: {c:createC('c_net','#a855f7',10),el:document.getElementById('m_net'),current:2.4,s:'G'}, api: {c:createC('c_api','#f59e0b',500),el:document.getElementById('m_api'),current:40,s:'ms'}, err: {c:createC('c_err','#f43f5e',5),el:document.getElementById('m_err'),current:0.01,s:'%'}, que: {c:createC('c_que','#22d3ee',100),el:document.getElementById('m_que'),current:10,s:''} };
+        
+        setInterval(() => { Object.values(charts).forEach(ch => { let n = ch.current + (Math.random()-0.5)*(ch.current*0.3); if(n<0)n=0; ch.current=n*0.2 + ch.current*0.8; const a=ch.c.data.datasets[0].data; a.push(ch.current); a.shift(); ch.c.update(); ch.el.innerText=ch.current.toFixed(1)+ch.s; }); }, 1000);
+
+        /* --- AI REASONING (TYPEWRITER & NEURAL NET) --- */
+        const aiTextEl = document.getElementById('aiText');
+        async function typeAI(text) {
+            aiTextEl.innerText = "> ";
+            for(let i=0; i<text.length; i++) { aiTextEl.innerText += text[i]; await new Promise(r => setTimeout(r, 15)); }
+        }
+
+        const nnCanv = document.getElementById('nnCanvas'); const nnCtx = nnCanv.getContext('2d');
+        function resizeNN() { nnCanv.width = nnCanv.parentElement.clientWidth; nnCanv.height = nnCanv.parentElement.clientHeight; }
+        window.addEventListener('resize', resizeNN); resizeNN();
+        let nnNodes = Array(15).fill().map(()=>({x:Math.random()*nnCanv.width, y:Math.random()*nnCanv.height, dx:(Math.random()-0.5)*0.5, dy:(Math.random()-0.5)*0.5}));
+        function animNN() {
+            nnCtx.clearRect(0,0,nnCanv.width,nnCanv.height);
+            nnCtx.strokeStyle = "rgba(34,211,238,0.2)"; nnCtx.fillStyle = "rgba(34,211,238,0.5)";
+            nnNodes.forEach(n => { n.x+=n.dx; n.y+=n.dy; if(n.x<0||n.x>nnCanv.width) n.dx*=-1; if(n.y<0||n.y>nnCanv.height) n.dy*=-1; nnCtx.beginPath(); nnCtx.arc(n.x,n.y,2,0,Math.PI*2); nnCtx.fill(); });
+            for(let i=0; i<nnNodes.length; i++) for(let j=i+1; j<nnNodes.length; j++) {
+                if(Math.hypot(nnNodes[i].x-nnNodes[j].x, nnNodes[i].y-nnNodes[j].y) < 60) { nnCtx.beginPath(); nnCtx.moveTo(nnNodes[i].x, nnNodes[i].y); nnCtx.lineTo(nnNodes[j].x, nnNodes[j].y); nnCtx.stroke(); }
+            }
+            requestAnimationFrame(animNN);
+        }
+        animNN();
+
+        /* --- TOPOLOGY PACKET ANIMATOR --- */
+        function spawnPacket() {
+            const svg = document.getElementById('packetSvg');
+            if(document.body.classList.contains('executive-mode')) return; // Save perf in exec mode
+            
+            // Randomly pick a source (elb) to a target (gateway -> pod)
+            const elb = document.getElementById('node-elb');
+            const gws = Array.from(document.querySelectorAll('#node-gw1, #node-gw2'));
+            const pods = Array.from(document.querySelectorAll('.k8s-node:not(.dead)'));
+            const redis = document.getElementById('node-redis');
+            
+            if(pods.length===0) return; // all dead
+            
+            const contRect = document.getElementById('infraCont').getBoundingClientRect();
+            
+            // Create a dot that moves ELB -> GW -> POD -> REDIS
+            const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            dot.setAttribute("r", "2"); dot.setAttribute("class", "packet-dot");
+            svg.appendChild(dot);
+            
+            const getCenter = (el) => {
+                const r = el.getBoundingClientRect();
+                return {x: r.left - contRect.left + r.width/2, y: r.top - contRect.top + r.height/2};
+            };
+            
+            const p1 = getCenter(elb);
+            const p2 = getCenter(gws[Math.floor(Math.random()*gws.length)]);
+            const p3 = getCenter(pods[Math.floor(Math.random()*pods.length)]);
+            const p4 = getCenter(redis);
+            
+            let progress = 0;
+            const speed = 0.02;
+            
+            function animatePacket() {
+                progress += speed;
+                let curX, curY;
+                if(progress < 1) { curX = p1.x + (p2.x-p1.x)*progress; curY = p1.y + (p2.y-p1.y)*progress; }
+                else if(progress < 2) { const t = progress-1; curX = p2.x + (p3.x-p2.x)*t; curY = p2.y + (p3.y-p2.y)*t; }
+                else if(progress < 3) { const t = progress-2; curX = p3.x + (p4.x-p3.x)*t; curY = p3.y + (p4.y-p3.y)*t; }
+                else { dot.remove(); return; }
+                
+                dot.setAttribute("cx", curX); dot.setAttribute("cy", curY);
+                requestAnimationFrame(animatePacket);
+            }
+            animatePacket();
+        }
+        setInterval(spawnPacket, 300);
+
+        /* --- MAP ANIMATION --- */
+        function fireMapLasers(count, color) {
+            const overlay = document.getElementById('mapOverlay');
+            for(let i=0; i<count; i++) {
+                setTimeout(() => {
+                    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    path.setAttribute("d", `M${Math.random()*1000},${Math.random()*500} Q500,100 500,250`);
+                    path.setAttribute("class", "attack-beam");
+                    path.setAttribute("stroke", color);
+                    path.style.filter = `drop-shadow(0 0 5px ${color})`;
+                    overlay.appendChild(path);
+                    playSound(800 - Math.random()*200, 'triangle', 0.1, 0.02);
+                    setTimeout(() => path.remove(), 1600);
+                }, Math.random() * 2000);
+            }
+        }
+
+        /* --- SIMULATION ENGINE --- */
+        let simActive = false;
+        
+        async function triggerAttack(btn, type, color) {
+            if(simActive) return;
+            simActive = true; btn.classList.add('loading');
+            document.getElementById('sysRisk').setAttribute('data-risk', '3');
+            
+            logEvent(`Intrusion Alert: ${type} targeting perimeter.`, "SEC");
+            typeAI(`Analyzing anomaly... Threat signature matches ${type}.`);
+            playSiren();
+            
+            fireMapLasers(15, color);
+            charts.cpu.current = 98; charts.net.current = 9.5; charts.err.current = 4.2;
+            
+            await new Promise(r=>setTimeout(r,1000));
+            document.getElementById('aiConfFill').style.width = '95%';
+            document.getElementById('node-gw1').classList.add('danger');
+            logEvent(`Mitigation pipeline engaged. Dropping suspicious packets.`, "AI");
+            typeAI(`Confidence score: 95%. Deploying WAF rules...`);
+            
+            btn.classList.remove('loading');
+        }
+
+        async function killNode(btn) {
+            if(simActive) return;
+            simActive = true; btn.classList.add('loading');
+            document.getElementById('sysRisk').setAttribute('data-risk', '2');
+            
+            const pods = document.querySelectorAll('.k8s-node:not(.dead)');
+            if(pods.length===0) return;
+            const target = pods[Math.floor(Math.random()*pods.length)];
+            
+            logEvent(`Kernel Panic detected on ${target.innerText}.`, "K8S");
+            typeAI(`Worker node uncommunicative. Rerouting traffic...`);
+            playSound(100, 'sawtooth', 0.5, 0.2);
+            
+            target.classList.remove('active');
+            target.classList.add('danger');
+            charts.err.current = 2.5; charts.api.current = 250;
+            
+            await new Promise(r=>setTimeout(r,1000));
+            target.classList.add('dead'); // disconnect visually
+            logEvent(`${target.innerText} evicted from cluster.`, "K8S");
+            
+            btn.classList.remove('loading');
+        }
+
+        async function healSystem(btn) {
+            if(!simActive) return;
+            btn.classList.add('loading');
+            
+            logEvent("Autonomous recovery playbook initiated.", "AI");
+            typeAI("Restarting pods... Provisioning backup... Rebuilding cache...");
+            
+            // Fix GWs
+            document.querySelectorAll('.danger:not(.dead)').forEach(n => {
+                n.classList.remove('danger');
+                n.style.borderColor = "var(--neon-amber)"; // healing color
+                setTimeout(()=>n.style.borderColor="", 1500);
+            });
+            
+            // Replace dead node
+            const deadNode = document.querySelector('.dead');
+            if(deadNode) {
+                await new Promise(r=>setTimeout(r,800));
+                deadNode.remove();
+                const newNode = document.createElement('div');
+                newNode.className = "infra-node active k8s-node";
+                newNode.innerText = `K8s Pod ${Date.now().toString().slice(-3)}`;
+                document.getElementById('k8sRow').appendChild(newNode);
+                logEvent(`New pod ${newNode.innerText} provisioned successfully.`, "K8S");
+            }
+            
+            charts.cpu.current = 15; charts.net.current = 2.4; charts.err.current = 0.01; charts.api.current = 40;
+            document.getElementById('sysRisk').setAttribute('data-risk', '1');
+            document.getElementById('aiConfFill').style.width = '12%';
+            
+            await new Promise(r=>setTimeout(r,1500));
+            playSound(600, 'sine', 0.3, 0.1); playSound(800, 'sine', 0.5, 0.1); // success chime
+            
+            typeAI("System recovered. All observability metrics nominal.");
+            logEvent("Incident resolved. Return to monitoring.", "SYS");
+            
+            simActive = false; btn.classList.remove('loading');
+        }
+
+        /* --- RED vs BLUE BATTLE MODE --- */
+        let battleInt;
+        function toggleBattleMode() {
+            const btn = document.getElementById('btnBattle');
+            btn.classList.toggle('active');
+            if(btn.classList.contains('active')) {
+                btn.innerText = "⚔️ Battle Mode: ON";
+                logEvent("Red vs Blue Team simulation loop engaged.", "SYS");
+                battleInt = setInterval(async () => {
+                    if(!simActive) {
+                        const btns = document.querySelectorAll('.btn-cmd:not(.action)');
+                        const rBtn = btns[Math.floor(Math.random()*btns.length)];
+                        rBtn.click();
+                    } else {
+                        await new Promise(r=>setTimeout(r,3000));
+                        document.getElementById('btnHeal').click();
+                    }
+                }, 4000);
+            } else {
+                btn.innerText = "⚔️ Battle Mode: OFF";
+                clearInterval(battleInt);
+                logEvent("Battle Mode disengaged.", "SYS");
+            }
+        }
+
+        /* Particles */
+        const canvas = document.getElementById('particleCanvas'), ctx = canvas.getContext('2d');
+        let parts = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; parts = Array(50).fill().map(()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height,s:Math.random()*2+1,dx:Math.random()*0.5-0.25,dy:Math.random()*-0.5-0.1,a:Math.random()*0.5+0.1})); }
+        function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="rgba(14,165,233,0.5)"; parts.forEach(p => { p.x+=p.dx; p.y+=p.dy; if(p.y<0){p.y=canvas.height;p.x=Math.random()*canvas.width;} ctx.globalAlpha=p.a; ctx.beginPath(); ctx.arc(p.x,p.y,p.s,0,Math.PI*2); ctx.fill(); }); requestAnimationFrame(anim); }
+        window.addEventListener('resize', resize); resize(); anim();
+        
+        setTimeout(() => logEvent("Security Operations Center Online.", "SYS"), 500);
+
+    </script>
+</body>
+</html>
