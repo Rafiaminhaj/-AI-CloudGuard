@@ -1,1 +1,4 @@
 gradio
+flask
+flask-cors
+gunicorn
