@@ -1,6 +1,6 @@
 async function getLocalSimulationResponse(prompt) {
   try {
-    const res = await fetch('http://localhost:7860/rag-query', {
+    const res = await fetch('https://ai-cloudguard.onrender.com/rag-query', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: prompt })

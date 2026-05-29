@@ -111,7 +111,7 @@ export default function App() {
 
     const interval = setInterval(async () => {
       try {
-        const res = await fetch('http://localhost:7860/state');
+        const res = await fetch('https://ai-cloudguard.onrender.com/state');
         if (res.ok) {
           const stateData = await res.json();
           setCpuData(prev => [...prev.slice(1), { time: Date.now(), value: stateData.cpu_usage }]);
@@ -185,7 +185,7 @@ export default function App() {
 
   const handleBackendAction = async (actionStr) => {
     try {
-      const res = await fetch('http://localhost:7860/step', {
+      const res = await fetch('https://ai-cloudguard.onrender.com/step', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: actionStr })
